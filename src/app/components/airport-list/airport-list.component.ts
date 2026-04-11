@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
 import { Airport } from '../../models/airport.model';
@@ -17,7 +16,11 @@ export class AirportListComponent implements OnInit {
   isLoading = false;
   readonly usesBackend = environment.useBackend;
 
-  constructor(private readonly airportService: AirportService) {}
+  constructor(
+    private readonly airportService: AirportService,
+    private readonly ngZone: NgZone,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadAirports();
@@ -29,14 +32,21 @@ export class AirportListComponent implements OnInit {
 
     this.airportService
       .getAirports()
-      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (airports) => {
-          this.airports = airports;
+          this.ngZone.run(() => {
+            this.airports = airports;
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          });
         },
         error: () => {
-          this.airports = [];
-          this.errorMessage = 'Unable to load airport data from the backend. Please try again.';
+          this.ngZone.run(() => {
+            this.airports = [];
+            this.isLoading = false;
+            this.errorMessage = 'Unable to load airport data from the backend. Please try again.';
+            this.cdr.detectChanges();
+          });
         }
       });
   }

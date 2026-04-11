@@ -10,7 +10,7 @@ import { Airport } from '../models/airport.model';
   providedIn: 'root'
 })
 export class AirportService {
-  private readonly airportsUrl = `${environment.apiBaseUrl}/getairports`;
+  private readonly airportsUrl = `${environment.apiBaseUrl}/airports/getallairports`;
 
   constructor(private readonly http: HttpClient) {}
 
