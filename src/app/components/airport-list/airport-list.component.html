@@ -1,0 +1,43 @@
+<section class="airport-card">
+  <div class="toolbar">
+    <div>
+      <h2>Airports</h2>
+      <p>
+        Source:
+        <strong>{{ usesBackend ? 'Backend API' : 'Static JSON data' }}</strong>
+      </p>
+    </div>
+
+    <button type="button" class="refresh-button" (click)="loadAirports()" [disabled]="isLoading">
+      {{ isLoading ? 'Refreshing...' : 'Refresh Data' }}
+    </button>
+  </div>
+
+  <div class="status loading" *ngIf="isLoading">Loading airports...</div>
+  <div class="status error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="table-wrapper" *ngIf="!isLoading && airports.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Airport Name</th>
+          <th>Code</th>
+          <th>City</th>
+          <th>Country</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let airport of airports">
+          <td data-label="Airport Name">{{ airport.name }}</td>
+          <td data-label="Code">{{ airport.code }}</td>
+          <td data-label="City">{{ airport.city }}</td>
+          <td data-label="Country">{{ airport.country }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="status empty" *ngIf="!isLoading && !errorMessage && airports.length === 0">
+    No airports are available.
+  </div>
+</section>
